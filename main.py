@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from functions.active_infos import get_infos
+from pydantic import BaseModel
+from typing import List
 
 app = FastAPI()
 
@@ -13,9 +15,13 @@ app.add_middleware(
 )
 
 
-@app.get("/active/{active_name}")
-async def get_active_infos(active_name: str):
-    infos = get_infos(active_name)
+class ActivesRequest(BaseModel):
+    actives_list: List[str]
+
+
+@app.post("/actives-infos")
+async def actives_infos(actives: ActivesRequest):
+    infos = get_infos(actives.actives_list)
     return infos
 
 
